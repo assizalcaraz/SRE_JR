@@ -37,6 +37,10 @@ jobs:
     - name: Deploy to DigitalOcean
       env:
         DIGITALOCEAN_API_TOKEN: ${{ secrets.DIGITALOCEAN_API_TOKEN }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
       run: |
-        scp -r . root@64.226.81.5:/SRE_JR/portfolio/portfolio
-        ssh root@64.226.81.5 'cd /SRE_JR/portfolio/portfolio && docker-compose down && docker-compose up -d'
+        echo "$SSH_PRIVATE_KEY" > id_rsa
+        chmod 600 id_rsa
+        scp -i id_rsa -o StrictHostKeyChecking=no -r . root@64.226.81.5:/SRE_JR/portfolio/portfolio
+        ssh -i id_rsa -o StrictHostKeyChecking=no root@64.226.81.5 'cd /SRE_JR/portfolio/portfolio && docker-compose down && docker-compose up -d'
