@@ -38,6 +38,8 @@ jobs:
       env:
         DIGITALOCEAN_API_TOKEN: ${{ secrets.DIGITALOCEAN_API_TOKEN }}
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+
 
       run: |
         echo "$SSH_PRIVATE_KEY" > id_ed25519
