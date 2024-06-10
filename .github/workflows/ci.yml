@@ -23,6 +23,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r portfolio/requirements.txt
 
+    - name: Set environment variables
+      run: |
+        echo "DJANGO_ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}" >> $GITHUB_ENV
+        echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
+
     - name: Run tests
       run: |
         cd portfolio
