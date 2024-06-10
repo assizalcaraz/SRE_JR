@@ -36,16 +36,12 @@ jobs:
 
     - name: Deploy to DigitalOcean
       env:
-        DIGITALOCEAN_API_TOKEN: ${{ secrets.DIGITALOCEAN_API_TOKEN }}
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-
-
       run: |
         echo "$SSH_PRIVATE_KEY" > id_ed25519
         chmod 600 id_ed25519
         echo "$SSH_KNOWN_HOSTS" > known_hosts
-        scp -i id_ed25519 -o UserKnownHostsFile=known_hosts -r . root@64.226.81.5:/SRE_JR/portfolio/portfolio
-        ssh -i id_ed25519 -o UserKnownHostsFile=known_hosts root@64.226.81.5 'cd /SRE_JR/portfolio/portfolio && docker-compose down && docker-compose up -d'
-
-
+        ssh -i id_ed25519 -o UserKnownHostsFile=known_hosts -o StrictHostKeyChecking=no -o LogLevel=ERROR root@64.226.81.5 'echo "Connection successful"'
+        scp -i id_ed25519 -o UserKnownHostsFile=known_hosts -r portfolio root@64.226.81.5:/SRE_JR/
+        ssh -i id_ed25519 -o UserKnownHostsFile=known_hosts root@64.226.81.5 'cd /SRE_JR/portfolio && docker-compose down && docker-compose up -d'
