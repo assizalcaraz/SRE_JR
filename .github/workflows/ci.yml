@@ -35,7 +35,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r portfolio/requirements.txt
         
-    - name: Copy .env file
+    - name: Create .env file
       run: |
         echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> portfolio/.env
         echo "DEBUG=${{ secrets.DEBUG }}" >> portfolio/.env
@@ -69,7 +69,7 @@ jobs:
 
     - name: Deploy to DigitalOcean
       env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}   
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
       run: |
         chmod 600 id_ed25519
