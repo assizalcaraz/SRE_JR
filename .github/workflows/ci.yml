@@ -39,7 +39,7 @@ jobs:
       working-directory: ./portfolio
       run: |
         docker-compose up -d --build
-        sleep 10
+        sleep 30  # Incrementar tiempo de espera para asegurarse de que PostgreSQL esté completamente listo
 
     - name: Check Docker version
       run: docker --version
