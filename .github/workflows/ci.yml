@@ -28,6 +28,9 @@ jobs:
         echo "DJANGO_ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}" >> $GITHUB_ENV
         echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
         echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
+        echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> $GITHUB_ENV
+        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> $GITHUB_ENV
+        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> $GITHUB_ENV
 
     - name: Run tests
       run: |
@@ -39,9 +42,8 @@ jobs:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
       run: |
-        echo "$SSH_PRIVATE_KEY" > id_ed25519
         chmod 600 id_ed25519
-        echo "$SSH_KNOWN_HOSTS" > known_hosts
         ssh-keyscan -H 64.226.81.5 >> known_hosts
         scp -i id_ed25519 -o StrictHostKeyChecking=no -o UserKnownHostsFile=known_hosts -r portfolio root@64.226.81.5:/SRE_JR/portfolio
-        ssh -i id_ed25519 -o StrictHostKeyChecking=no -o UserKnownHostsFile=known_hosts root@64.226.81.5 'cd /SRE_JR/portfolio/portfolio && docker-compose down && docker-compose up -d'
+        scp -i id_ed25519 -o StrictHostKeyChecking=no -o UserKnownHostsFile=known_hosts .env root@64.226.81.5:/SRE_JR/portfolio/.env
+        ssh -i id_ed25519 -o StrictHostKeyChecking=no -o UserKnownHostsFile=known_hosts root@64.226.81.5 'cd /SRE_JR/portfolio && docker-compose build && docker-compose up -d'
