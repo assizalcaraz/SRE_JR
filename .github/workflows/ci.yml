@@ -47,12 +47,16 @@ jobs:
       working-directory: ./portfolio
       run: docker-compose exec -T web python manage.py test
 
+    - name: Setup SSH
+      run: |
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_ed25519
+        chmod 600 id_ed25519
+
     - name: Deploy to DigitalOcean
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
       run: |
-        chmod 600 id_ed25519
         ssh-keyscan -H ${{ secrets.DJANGO_ALLOWED_HOSTS }} >> known_hosts
         scp -i id_ed25519 -o StrictHostKeyChecking=no -o UserKnownHostsFile=known_hosts -r portfolio root@${{ secrets.DJANGO_ALLOWED_HOSTS }}:/root/SRE_JR/portfolio
         scp -i id_ed25519 -o StrictHostKeyChecking=no -o UserKnownHostsFile=known_hosts portfolio/.env root@${{ secrets.DJANGO_ALLOWED_HOSTS }}:/root/SRE_JR/portfolio/.env
