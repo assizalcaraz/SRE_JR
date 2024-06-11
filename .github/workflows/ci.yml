@@ -24,7 +24,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
@@ -43,7 +43,7 @@ jobs:
         echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> portfolio/.env
         echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> portfolio/.env
         echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> portfolio/.env
-        echo "DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@127.0.0.1:5432/${{ secrets.POSTGRES_DB }}" >> portfolio/.env
+        echo "DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}" >> portfolio/.env
 
     - name: Wait for PostgreSQL to be ready
       run: |
@@ -62,9 +62,13 @@ jobs:
         fi
 
     - name: Run migrations
+      env:
+        DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}
       run: python portfolio/manage.py migrate
 
     - name: Run tests
+      env:
+        DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}
       run: python portfolio/manage.py test
 
     - name: Deploy to DigitalOcean
