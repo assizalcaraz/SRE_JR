@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
- 
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -14,6 +14,16 @@ jobs:
       run: |
         sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
         sudo chmod +x /usr/local/bin/docker-compose
+
+    - name: Create .env file
+      run: |
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> portfolio/.env
+        echo "DEBUG=1" >> portfolio/.env
+        echo "DJANGO_ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}" >> portfolio/.env
+        echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> portfolio/.env
+        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> portfolio/.env
+        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> portfolio/.env
+        echo "DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:5432/${{ secrets.POSTGRES_DB }}" >> portfolio/.env
 
     - name: Build and run containers
       working-directory: ./portfolio
