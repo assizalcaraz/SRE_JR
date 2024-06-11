@@ -29,6 +29,7 @@ jobs:
       working-directory: ./portfolio
       run: |
         docker-compose up -d --build
+        sleep 10
 
     - name: Wait for PostgreSQL to be ready
       working-directory: ./portfolio
