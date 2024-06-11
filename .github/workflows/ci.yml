@@ -46,7 +46,7 @@ jobs:
         echo "DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:5432/${{ secrets.POSTGRES_DB }}" >> .env
 
     - name: Change to portfolio directory
-      run: cd SRE_JR/portfolio
+      run: cd portfolio
 
     - name: Run migrations
       run: python manage.py migrate
