@@ -34,15 +34,18 @@ jobs:
       working-directory: ./portfolio
       run: |
         echo "Waiting for PostgreSQL to be ready..."
-        docker-compose exec db bash -c "until pg_isready -h localhost -p 5432 -U ${POSTGRES_USER}; do sleep 1; done"
+        until docker-compose exec -T db pg_isready -U ${{ secrets.POSTGRES_USER }}; do
+          echo "PostgreSQL is not ready yet. Waiting..."
+          sleep 5
+        done
 
     - name: Run migrations
       working-directory: ./portfolio
-      run: docker-compose exec web python manage.py migrate
+      run: docker-compose exec -T web python manage.py migrate
 
     - name: Run tests
       working-directory: ./portfolio
-      run: docker-compose exec web python manage.py test
+      run: docker-compose exec -T web python manage.py test
 
     - name: Deploy to DigitalOcean
       env:
