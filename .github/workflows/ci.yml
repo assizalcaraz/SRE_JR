@@ -16,7 +16,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U ${{ secrets.POSTGRES_USER }}"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -38,25 +38,25 @@ jobs:
     - name: Copy .env file
       run: |
         echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> portfolio/.env
-        echo "DEBUG=1" >> portfolio/.env  # Asegúrate de que DEBUG esté configurado correctamente
+        echo "DEBUG=${{ secrets.DEBUG }}" >> portfolio/.env
         echo "DJANGO_ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}" >> portfolio/.env
         echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> portfolio/.env
         echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> portfolio/.env
         echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> portfolio/.env
-        echo "DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:5432/${{ secrets.POSTGRES_DB }}" >> portfolio/.env
+        echo "DATABASE_URL=postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}" >> portfolio/.env
 
     - name: Wait for PostgreSQL to be ready
       run: |
         echo "Waiting for PostgreSQL to be ready..."
         for i in {1..10}; do
-          if pg_isready -h db -p 5432 -U ${{ secrets.POSTGRES_USER }}; then
+          if pg_isready -h localhost -p 5432 -U ${{ secrets.POSTGRES_USER }}; then
             echo "PostgreSQL is ready!"
             break
           fi
           echo "PostgreSQL is not ready yet. Waiting..."
           sleep 5
         done
-        if ! pg_isready -h db -p 5432 -U ${{ secrets.POSTGRES_USER }}; then
+        if ! pg_isready -h localhost -p 5432 -U ${{ secrets.POSTGRES_USER }}; then
           echo "PostgreSQL did not become ready in time."
           exit 1
         fi
