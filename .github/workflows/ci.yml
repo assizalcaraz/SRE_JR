@@ -64,6 +64,13 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_ed25519
         chmod 600 id_ed25519
 
+    - name: Copy Docker Compose logs
+      working-directory: ./portfolio
+      run: |
+        mkdir -p logs
+        docker-compose logs > logs/docker-compose.log
+        cat logs/docker-compose.log
+
     - name: Deploy to DigitalOcean
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
